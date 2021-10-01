@@ -17,3 +17,27 @@ output "storage_account_id" {
 output "log_analytics_workspace_id" {
   value = azurerm_log_analytics_workspace.my.id
 }
+
+output "network_name" {
+  value = var.private_cluster_enabled ? azurerm_virtual_network.my[0].name : ""
+}
+
+output "network_id" {
+  value = var.private_cluster_enabled ? azurerm_virtual_network.my[0].id : ""
+}
+
+output "subnet_name" {
+  value = var.private_cluster_enabled ? azurerm_subnet.my[0].name : ""
+}
+
+output "subnet_id" {
+  value = var.private_cluster_enabled ? azurerm_subnet.my[0].id : ""
+}
+
+output "kubernetes_cluster_name" {
+  value = azurerm_kubernetes_cluster.my.name
+}
+
+output "kubernetes_cluster_id" {
+  value = azurerm_kubernetes_cluster.my.id
+}
