@@ -14,10 +14,13 @@ locals {
   ddos_plan_name       = "${var.base_name}-${var.environment}-ddos-pp"
   virtual_network_name = "${var.base_name}-${var.environment}-vnet"
   subnet_name          = "${var.base_name}-${var.environment}-subnet"
+  aks_cluster_name     = "${var.base_name}-${var.environment}"
+
   tags = {
-    app        = var.base_name
-    creator    = "terraform"
-    created_on = formatdate("YYYY MMM DD hh:mm ZZZ", timestamp())
+    app         = var.base_name
+    environment = var.environment
+    creator     = "terraform"
+    created_on  = formatdate("YYYY MMM DD hh:mm ZZZ", timestamp())
   }
 }
 
@@ -26,12 +29,11 @@ resource "azurerm_resource_group" "my" {
   location = var.location
 
   lifecycle {
-    prevent_destroy = true
-    ignore_changes  = [tags, ]
+    // prevent_destroy = true
+    ignore_changes = [tags]
   }
 
   tags = local.tags
-
 }
 
 resource "azurerm_storage_account" "my" {
@@ -43,8 +45,8 @@ resource "azurerm_storage_account" "my" {
   account_replication_type = var.storage_replication_type
 
   lifecycle {
-    prevent_destroy = true
-    ignore_changes  = [tags, ]
+    // prevent_destroy = true
+    ignore_changes = [tags]
   }
 
   tags = local.tags
@@ -55,6 +57,12 @@ resource "azurerm_log_analytics_workspace" "my" {
   resource_group_name = azurerm_resource_group.my.name
   location            = azurerm_resource_group.my.location
   sku                 = var.log_analytics_workspace_sku
+
+  lifecycle {
+    ignore_changes = [tags]
+  }
+
+  tags = local.tags
 }
 
 resource "azurerm_log_analytics_solution" "my" {
@@ -68,5 +76,11 @@ resource "azurerm_log_analytics_solution" "my" {
     publisher = "Microsoft"
     product   = "OMSGallery/ContainerInsights"
   }
+
+  lifecycle {
+    ignore_changes = [tags]
+  }
+
+  tags = local.tags
 }
 
