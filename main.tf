@@ -7,6 +7,8 @@ resource "random_string" "my" {
   special = false
 }
 
+// Setup locals for all files
+
 locals {
   resource_group_name  = "${var.base_name}-${var.environment}-resource-group"
   storage_account_name = "${var.base_name}${var.environment}${random_string.my.result}"
@@ -23,6 +25,8 @@ locals {
     created_on  = formatdate("YYYY MMM DD hh:mm ZZZ", timestamp())
   }
 }
+
+// Create base resources
 
 resource "azurerm_resource_group" "my" {
   name     = local.resource_group_name
@@ -51,6 +55,8 @@ resource "azurerm_storage_account" "my" {
 
   tags = local.tags
 }
+
+// Log analytics 
 
 resource "azurerm_log_analytics_workspace" "my" {
   name                = local.law_name
