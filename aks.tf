@@ -6,12 +6,12 @@ data "azurerm_kubernetes_service_versions" "current" {
 // Create cluster
 
 resource "azurerm_kubernetes_cluster" "my" {
-  name                    = local.aks_cluster_name
-  location                = azurerm_resource_group.my.location
-  resource_group_name     = azurerm_resource_group.my.name
-  dns_prefix              = local.aks_cluster_name
-  kubernetes_version      = var.kubernetes_version != null ? var.kubernetes_version : data.azurerm_kubernetes_service_versions.current.latest_version
-  private_cluster_enabled = var.private_cluster_enabled
+  name                            = local.aks_cluster_name
+  location                        = azurerm_resource_group.my.location
+  resource_group_name             = azurerm_resource_group.my.name
+  dns_prefix                      = local.aks_cluster_name
+  kubernetes_version              = var.kubernetes_version != null ? var.kubernetes_version : data.azurerm_kubernetes_service_versions.current.latest_version
+  private_cluster_enabled         = var.private_cluster_enabled
   api_server_authorized_ip_ranges = var.api_authorized_ips
 
   default_node_pool {
