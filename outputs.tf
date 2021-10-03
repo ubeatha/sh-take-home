@@ -41,3 +41,12 @@ output "kubernetes_cluster_name" {
 output "kubernetes_cluster_id" {
   value = azurerm_kubernetes_cluster.my.id
 }
+
+output "kubernetes_cluster" {
+  value = azurerm_kubernetes_cluster.my
+  sensitive   = true
+}
+
+output "cluster_authorized_ranges" {
+  value = azurerm_kubernetes_cluster.my.api_server_authorized_ip_ranges
+}

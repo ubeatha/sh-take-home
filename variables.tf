@@ -4,6 +4,12 @@ variable "api_authorized_ips" {
   default     = []
 }
 
+variable "email" {
+  description = "Email address for alerts"
+  type        = string
+  default     = "root@localhost"
+}
+
 variable "base_name" {
   description = "Base for resource naming"
   type        = string

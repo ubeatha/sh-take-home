@@ -13,6 +13,8 @@ locals {
   resource_group_name  = "${var.base_name}-${var.environment}-resource-group"
   storage_account_name = "${var.base_name}${var.environment}${random_string.my.result}"
   law_name             = "${var.base_name}-${var.environment}-law-${data.azurerm_client_config.my.subscription_id}"
+  app_insights         = "${var.base_name}-${var.environment}-app-insights"
+  query_rules_alert    = "${var.base_name}-${var.environment}-query-rules-alert"
   ddos_plan_name       = "${var.base_name}-${var.environment}-ddos-pp"
   virtual_network_name = "${var.base_name}-${var.environment}-vnet"
   subnet_name          = "${var.base_name}-${var.environment}-subnet"
@@ -89,4 +91,3 @@ resource "azurerm_log_analytics_solution" "my" {
 
   tags = local.tags
 }
-
