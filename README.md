@@ -31,13 +31,9 @@ If necessary, select the correct subscription:
 az account set --subscription "Azure subscription 1"
 ```
 
-Optional: change the default value for the `api_authorized_ips` variable in the `variables.tf` file to secure the API server to be accessed from specific IP range(s):
-```yaml
-variable "api_authorized_ips" {
-  description = "Restricts access to specified IP address ranges to access Kubernetes servers"
-  type        = list(any)
-  default     = ["your.ip.address.range1/mask"]
-}
+Optional! Change the default value for the `api_authorized_ips` variable to secure the API server to be accessed from specific IP range(s):
+```
+export TF_VAR_api_authorized_ips=[\"$(curl -s ifconfig.me)/32\"]
 ```
 
 Initialize the terraform configuration:
@@ -62,5 +58,12 @@ Confirm access to the cluster:
 kubectl get nodes
 ```
 
-If the command times out double check the default value for `api_authorized_ips` in the `variables.tf` file.
+If the command times out double check the default value for `TFVAR_api_authorized_ips`:
+```
+echo $TF_VAR_api_authorized_ips
+```
 
+You can unset the variable if necessary:
+```
+unset TF_VAR_api_authorized_ips
+```
