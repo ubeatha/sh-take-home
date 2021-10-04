@@ -43,8 +43,8 @@ output "kubernetes_cluster_id" {
 }
 
 output "kubernetes_cluster" {
-  value = azurerm_kubernetes_cluster.my
-  sensitive   = true
+  value     = azurerm_kubernetes_cluster.my
+  sensitive = true
 }
 
 output "cluster_authorized_ranges" {

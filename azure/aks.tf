@@ -3,6 +3,41 @@ data "azurerm_kubernetes_service_versions" "current" {
   include_preview = false
 }
 
+// Get Azure AD info on existing account
+data "azuread_client_config" "current" {}
+
+// Create security groups
+
+resource "azuread_group" "k8s_admin" {
+  display_name     = "k8s admin"
+  owners           = [data.azuread_client_config.current.object_id]
+  security_enabled = true
+
+  members = [
+    data.azuread_client_config.current.object_id
+  ]
+}
+
+resource "azuread_group" "k8s_dev" {
+  display_name     = "k8s dev"
+  owners           = [data.azuread_client_config.current.object_id]
+  security_enabled = true
+
+  members = [
+    data.azuread_client_config.current.object_id
+  ]
+}
+
+resource "azuread_group" "k8s_test" {
+  display_name     = "k8s test"
+  owners           = [data.azuread_client_config.current.object_id]
+  security_enabled = true
+
+  members = [
+    data.azuread_client_config.current.object_id
+  ]
+}
+
 // Create cluster
 
 resource "azurerm_kubernetes_cluster" "my" {
@@ -43,6 +78,10 @@ resource "azurerm_kubernetes_cluster" "my" {
   // Expand on if time
   role_based_access_control {
     enabled = true
+    azure_active_directory {
+      managed                = true
+      admin_group_object_ids = [azuread_group.k8s_admin.id]
+    }
   }
 
   // linux_profile {
@@ -70,7 +109,7 @@ resource "azurerm_kubernetes_cluster" "my" {
 resource "azurerm_monitor_action_group" "my" {
   name                = "CriticalAlertsAction"
   resource_group_name = azurerm_resource_group.my.name
-  short_name          = "act-grp-one"
+  short_name          = "k8s-grp-one"
 
   email_receiver {
     name          = "Admin"
@@ -81,7 +120,7 @@ resource "azurerm_monitor_action_group" "my" {
 // Alert Rule
 
 resource "azurerm_monitor_scheduled_query_rules_alert" "my" {
-  name                = local.query_rules_alert 
+  name                = local.query_rules_alert
   location            = azurerm_resource_group.my.location
   resource_group_name = azurerm_resource_group.my.name
 
@@ -93,14 +132,14 @@ resource "azurerm_monitor_scheduled_query_rules_alert" "my" {
   data_source_id = azurerm_log_analytics_workspace.my.id
   description    = "K8S Container Counter Average CPU Usage Nano Cores"
   enabled        = true
-  query       = <<-QUERY
+  query          = <<-QUERY
   Perf
     | where ObjectName == K8SContainer and CounterName == cpuUsageNanoCores
     | summarize AvgCPUUsageNanoCores = avg(CounterValue) by bin(TimeGenerated, 30m), InstanceName, _ResourceId
 QUERY
-  severity    = 1
-  frequency   = 5
-  time_window = 30
+  severity       = 1
+  frequency      = 5
+  time_window    = 30
   trigger {
     operator  = "GreaterThan"
     threshold = 12
