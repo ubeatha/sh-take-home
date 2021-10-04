@@ -3,6 +3,41 @@ data "azurerm_kubernetes_service_versions" "current" {
   include_preview = false
 }
 
+// Get Azure AD info on existing account
+data "azuread_client_config" "current" {}
+
+// Create security groups
+
+resource "azuread_group" "k8s_admin" {
+  display_name     = "k8s admin"
+  owners           = [data.azuread_client_config.current.object_id]
+  security_enabled = true
+
+  members = [
+    data.azuread_client_config.current.object_id
+  ]
+}
+
+resource "azuread_group" "k8s_dev" {
+  display_name     = "k8s dev"
+  owners           = [data.azuread_client_config.current.object_id]
+  security_enabled = true
+
+  members = [
+    data.azuread_client_config.current.object_id
+  ]
+}
+
+resource "azuread_group" "k8s_test" {
+  display_name     = "k8s test"
+  owners           = [data.azuread_client_config.current.object_id]
+  security_enabled = true
+
+  members = [
+    data.azuread_client_config.current.object_id
+  ]
+}
+
 // Create cluster
 
 resource "azurerm_kubernetes_cluster" "my" {
@@ -43,6 +78,10 @@ resource "azurerm_kubernetes_cluster" "my" {
   // Expand on if time
   role_based_access_control {
     enabled = true
+    azure_active_directory {
+      managed                = true
+      admin_group_object_ids = [azuread_group.k8s_admin.id]
+    }
   }
 
   // linux_profile {
@@ -70,7 +109,7 @@ resource "azurerm_kubernetes_cluster" "my" {
 resource "azurerm_monitor_action_group" "my" {
   name                = "CriticalAlertsAction"
   resource_group_name = azurerm_resource_group.my.name
-  short_name          = "act-grp-one"
+  short_name          = "k8s-grp-one"
 
   email_receiver {
     name          = "Admin"

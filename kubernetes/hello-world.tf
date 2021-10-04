@@ -1,6 +1,7 @@
 resource "kubernetes_service" "hello_world" {
   metadata {
-    name = "hello-world"
+    name      = "hello-world"
+    namespace = "prod"
   }
   spec {
     selector = {
@@ -18,7 +19,8 @@ resource "kubernetes_service" "hello_world" {
 
 resource "kubernetes_deployment" "hello_world" {
   metadata {
-    name = "hello-word"
+    name      = "hello-word"
+    namespace = "prod"
     labels = {
       name = "hello-world"
     }
@@ -60,7 +62,7 @@ resource "kubernetes_deployment" "hello_world" {
           liveness_probe {
             tcp_socket {
               port = 5000
-              }
+            }
 
             initial_delay_seconds = 5
             period_seconds        = 20
@@ -71,9 +73,10 @@ resource "kubernetes_deployment" "hello_world" {
   }
 }
 
-resource "kubernetes_horizontal_pod_autoscaler" "my" {
+resource "kubernetes_horizontal_pod_autoscaler" "hello_world" {
   metadata {
-    name = "hello-world"
+    name      = "hello-world"
+    namespace = "prod"
   }
 
   spec {
@@ -88,3 +91,44 @@ resource "kubernetes_horizontal_pod_autoscaler" "my" {
     target_cpu_utilization_percentage = "85"
   }
 }
+
+// Network deny policy had no effect on service
+// resource "kubernetes_network_policy" "default-deny-ingress" {
+//   metadata {
+//     name = "default-deny-ingress"
+//     namespace = "prod"
+//   }
+
+//   spec {
+//     pod_selector {}
+//     policy_types = ["Ingress"]
+//   }
+// }
+
+// resource "kubernetes_network_policy" "hello_world" {
+//   metadata {
+//     name      = "hello-word-network-policy"
+//     namespace = "prod"
+//   }
+
+//   spec {
+//     pod_selector {
+//       match_expressions {
+//         key      = "name"
+//         operator = "In"
+//         values   = ["hello-world"]
+//       }
+//     }
+
+//     ingress {
+//       ports {
+//         port     = "http"
+//         protocol = "TCP"
+//       }
+//     }
+
+//     egress {} # single empty rule to allow all egress traffic
+
+//     policy_types = ["Ingress", "Egress"]
+//   }
+// }

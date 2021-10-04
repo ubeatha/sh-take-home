@@ -1,5 +1,4 @@
-data "azurerm_client_config" "my" {
-}
+data "azurerm_client_config" "my" {}
 
 resource "random_string" "my" {
   length  = 10
