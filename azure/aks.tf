@@ -120,7 +120,7 @@ resource "azurerm_monitor_action_group" "my" {
 // Alert Rule
 
 resource "azurerm_monitor_scheduled_query_rules_alert" "my" {
-  name                = local.query_rules_alert 
+  name                = local.query_rules_alert
   location            = azurerm_resource_group.my.location
   resource_group_name = azurerm_resource_group.my.name
 
@@ -132,14 +132,14 @@ resource "azurerm_monitor_scheduled_query_rules_alert" "my" {
   data_source_id = azurerm_log_analytics_workspace.my.id
   description    = "K8S Container Counter Average CPU Usage Nano Cores"
   enabled        = true
-  query       = <<-QUERY
+  query          = <<-QUERY
   Perf
     | where ObjectName == K8SContainer and CounterName == cpuUsageNanoCores
     | summarize AvgCPUUsageNanoCores = avg(CounterValue) by bin(TimeGenerated, 30m), InstanceName, _ResourceId
 QUERY
-  severity    = 1
-  frequency   = 5
-  time_window = 30
+  severity       = 1
+  frequency      = 5
+  time_window    = 30
   trigger {
     operator  = "GreaterThan"
     threshold = 12
