@@ -75,7 +75,9 @@ terraform -chdir=kubernetes apply
 ```
 
 Check the deploy:
+```
 curl http://$(kubectl get service/hello-world -n prod -o custom-columns=:.status.loadBalancer.ingress[0].ip | sed '/^$/d')
+```
 
 For Azure metrics go to portal and click on Home -> Resource Groups -> `shtest-test-resource-group` -> Metrics.  Select a scope of `shtest-test-resource-group`, select Kubernetes services from the Resource type drop down menu, select `shtest-test` from Kubernetes service dropdown menu, and click Apply.  Select your desired metric from the Metric dropdown menu.
 
@@ -89,7 +91,7 @@ Login with username and password: `admin`  `prom-operator`.
 
 # Notes
 
-A (bug)[https://github.com/hashicorp/terraform-provider-azurerm/pull/13493] in the azurerm provider requires that the version currently be locked to v2.78.0.
+A [bug](https://github.com/hashicorp/terraform-provider-azurerm/pull/13493) in the azurerm provider requires that the version currently be locked to v2.78.0.
 
 An additional bug was discovered working on the logging and alerting and the behaviour observed around log analytics work space was not always idempotent.
 
